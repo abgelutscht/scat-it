@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Image Tint Tool</title>
+
+<style>
+body {
+    background:#111;
+    color:white;
+    font-family:Arial,sans-serif;
+    text-align:center;
+    padding:20px;
+}
+canvas {
+    max-width:100%;
+    margin-top:20px;
+    border:1px solid #333;
+}
+button,input {
+    margin-top:15px;
+    padding:10px;
+    font-size:16px;
+}
+button {
+    background:#4a2713;
+    color:white;
+    border:none;
+}
+</style>
+</head>
+<body>
+
+<h2>Upload Image</h2>
+<input type="file" accept="image/*" id="upload">
+
+<canvas id="canvas"></canvas>
+
+<button id="download">Export Image</button>
+
+<script>
+const upload = document.getElementById("upload");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+upload.addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    img.onload = function () {
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // draw original image
+        ctx.drawImage(img, 0, 0);
+
+        // tint using multiply blend mode
+        ctx.globalCompositeOperation = "multiply";
+        ctx.fillStyle = "#4a2713";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // reset for safety
+        ctx.globalCompositeOperation = "source-over";
+    };
+    img.src = URL.createObjectURL(file);
+});
+
+document.getElementById("download").onclick = () => {
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = "tinted-image.png";
+    a.click();
+};
+</script>
+
+</body>
+</html>
