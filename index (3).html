@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCAT IT</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #1a1a1a, #000);
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    color: white;
+}
+
+canvas {
+    width: 100%;
+    max-height: 60vh;
+    border: 1px solid #333;
+    background: #000;
+}
+
+button {
+    margin-top: 15px;
+    padding: 12px;
+    font-size: 16px;
+    background: #4a2713;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+    <h1>SCAT IT</h1>
+
+    <div class="controls">
+        <input type="file" accept="image/*" id="upload">
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <button id="download">Export Image</button>
+</div>
+
+<script>
+const upload = document.getElementById("upload");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+upload.addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        ctx.drawImage(img, 0, 0);
+
+        ctx.globalCompositeOperation = "multiply";
+        ctx.fillStyle = "#4a2713";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = "source-over";
+    };
+
+    img.src = URL.createObjectURL(file);
+});
+
+document.getElementById("download").onclick = () => {
+    if (!canvas.width) return;
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = "scat-it.png";
+    a.click();
+};
+</script>
+
+</body>
+</html>
