@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>fuck u scalderm</title>
+
+<style>
+    body {
+        background: #111;
+        color: white;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding-top: 40px;
+    }
+
+    canvas {
+        max-width: 400px;
+        border: 2px solid #333;
+    }
+
+    input, button {
+        padding: 10px 15px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    button {
+        background: #4a2713;
+        color: white;
+        border: none;
+    }
+</style>
+</head>
+<body>
+
+<h2>MADE BY SCATTERS FOR SCATTERS</h2>
+
+<input type="file" accept="image/*" id="upload">
+
+<canvas id="canvas"></canvas>
+
+<button onclick="downloadImage()">Export Image</button>
+
+<script>
+const upload = document.getElementById("upload");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const overlayColor = "#4a2713";
+const overlayOpacity = 0.7; // adjust strength here
+
+upload.addEventListener("change", () => {
+    const file = upload.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        ctx.drawImage(img, 0, 0);
+
+        ctx.globalAlpha = overlayOpacity;
+        ctx.fillStyle = overlayColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.globalAlpha = 1;
+    };
+
+    img.src = URL.createObjectURL(file);
+});
+
+function downloadImage() {
+    const link = document.createElement("a");
+    link.download = "colored-image.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+}
+</script>
+
+</body>
+</html>
