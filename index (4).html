@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCAT IT</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow: hidden;
+}
+
+/* BACKGROUND VIDEO */
+#bgVideo {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    filter: brightness(0.35);
+}
+
+/* APP LAYOUT */
+.app {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.panel {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    border: 1px solid #222;
+}
+
+h1 {
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+}
+
+canvas {
+    width: 100%;
+    max-height: 55vh;
+    background: black;
+    border: 1px solid #333;
+}
+
+input, button {
+    margin-top: 15px;
+    padding: 12px;
+    font-size: 16px;
+}
+
+button {
+    background: #4a2713;
+    color: white;
+    border: none;
+}
+</style>
+</head>
+<body>
+
+<!-- FIXED BACKGROUND VIDEO -->
+<video id="bgVideo" autoplay muted loop playsinline>
+    <source src="background.mp4" type="video/mp4">
+</video>
+
+<div class="app">
+    <div class="panel">
+        <h1>SCAT IT</h1>
+
+        <input type="file" accept="image/*" id="upload">
+
+        <canvas id="canvas"></canvas>
+
+        <button id="download">Export Image</button>
+    </div>
+</div>
+
+<script>
+const upload = document.getElementById("upload");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+upload.addEventListener("change", () => {
+    const file = upload.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        ctx.drawImage(img, 0, 0);
+
+        // TRUE TINT (MULTIPLY)
+        ctx.globalCompositeOperation = "multiply";
+        ctx.fillStyle = "#4a2713";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = "source-over";
+    };
+    img.src = URL.createObjectURL(file);
+});
+
+document.getElementById("download").onclick = () => {
+    if (!canvas.width) return;
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = "scat-it.png";
+    a.click();
+};
+</script>
+
+</body>
+</html>
